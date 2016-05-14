@@ -27,13 +27,13 @@ public class CacheDb extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         StringBuffer sBuffer = new StringBuffer();
-        sBuffer.append("CREATE TABLE [" + TABLE_NAME + "] (");
-        sBuffer.append("[_id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ");
+        sBuffer.append("CREATE TABLE " + TABLE_NAME + " (");
+        sBuffer.append("_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ");
         sBuffer.append(Columns.URL).append(" TEXT,");
         sBuffer.append(Columns.RESULT).append(" TEXT,");
         sBuffer.append(Columns.ETAG).append(" TEXT,");
-        sBuffer.append(Columns.LAST_MODIFIED).append(" LONG)");
-        sBuffer.append(Columns.UPDATE_TIME).append(" LONG)");
+        sBuffer.append(Columns.LAST_MODIFIED).append(" LONG,");
+        sBuffer.append(Columns.UPDATE_TIME).append(" LONG);");
         db.execSQL(sBuffer.toString());
     }
 
