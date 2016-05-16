@@ -81,12 +81,19 @@ public class TestFragment extends Fragment implements LoaderManager.LoaderCallba
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            ((TextView) view).setText(cursor.getString(cursor.getColumnIndex(CacheOpenHelper.Columns.URL)));
+            String urlAndResult = cursor.getString(cursor.getColumnIndex(CacheOpenHelper.Columns.URL)) + " : " +
+                    cursor.getString(cursor.getColumnIndex(CacheOpenHelper.Columns.RESULT));
+            ((TextView) view).setText(urlAndResult);
         }
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
             return new TextView(context);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }
