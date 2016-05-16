@@ -1,13 +1,11 @@
 package com.novelot.netcache.test;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-import com.novelot.netcache.CacheDb;
+import com.novelot.netcache.CacheOpenHelper;
 import com.novelot.netcache.CacheProvider;
 import com.novelot.netcache.R;
 
@@ -18,7 +16,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initData();
+//        initData();
         setContentView(R.layout.activity_main);
     }
 
@@ -31,7 +29,7 @@ public class MainActivity extends FragmentActivity {
 
     public void addItem(View view) {
         ContentValues values = new ContentValues();
-        values.put(CacheDb.Columns.URL, "Url-" + (mIndex++));
+        values.put(CacheOpenHelper.Columns.URL, "Url-" + (mIndex++));
         getContentResolver().insert(CacheProvider.URI, values);
     }
 }

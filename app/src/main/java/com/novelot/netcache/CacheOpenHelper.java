@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by V on 2016/5/9.
  */
-public class CacheDb extends SQLiteOpenHelper {
+public class CacheOpenHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "kaolafm_cache.db";
     private static final int DB_VERSION = 1;
     public static final String TABLE_NAME = "t_cache";
@@ -20,7 +20,7 @@ public class CacheDb extends SQLiteOpenHelper {
         public static final String UPDATE_TIME = "update_time";
     }
 
-    public CacheDb(Context context) {
+    public CacheOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
@@ -29,11 +29,12 @@ public class CacheDb extends SQLiteOpenHelper {
         StringBuffer sBuffer = new StringBuffer();
         sBuffer.append("CREATE TABLE " + TABLE_NAME + " (");
         sBuffer.append("_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ");
-        sBuffer.append(Columns.URL).append(" TEXT,");
+        sBuffer.append(Columns.URL).append(" TEXT UNIQUE,");
         sBuffer.append(Columns.RESULT).append(" TEXT,");
         sBuffer.append(Columns.ETAG).append(" TEXT,");
         sBuffer.append(Columns.LAST_MODIFIED).append(" LONG,");
-        sBuffer.append(Columns.UPDATE_TIME).append(" LONG);");
+        sBuffer.append(Columns.UPDATE_TIME).append(" LONG");
+        sBuffer.append(");");
         db.execSQL(sBuffer.toString());
     }
 

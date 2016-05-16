@@ -19,9 +19,9 @@ public class CacheManager {
 
     public boolean contains(Context context, String url) {
         boolean result = false;
-        CacheDb cacheDb = new CacheDb(context);
+        CacheOpenHelper cacheDb = new CacheOpenHelper(context);
         SQLiteDatabase db = cacheDb.getReadableDatabase();
-        Cursor c = db.query(CacheDb.TABLE_NAME, null, CacheDb.Columns.URL + "=?", new String[]{url}, null, null, null);
+        Cursor c = db.query(CacheOpenHelper.TABLE_NAME, null, CacheOpenHelper.Columns.URL + "=?", new String[]{url}, null, null, null);
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                 result = true;
@@ -34,12 +34,12 @@ public class CacheManager {
 
     public String getResult(Context context, String url) {
         String result = null;
-        CacheDb cacheDb = new CacheDb(context);
+        CacheOpenHelper cacheDb = new CacheOpenHelper(context);
         SQLiteDatabase db = cacheDb.getReadableDatabase();
-        Cursor c = db.query(CacheDb.TABLE_NAME, null, CacheDb.Columns.URL + "=?", new String[]{url}, null, null, null);
+        Cursor c = db.query(CacheOpenHelper.TABLE_NAME, null, CacheOpenHelper.Columns.URL + "=?", new String[]{url}, null, null, null);
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                result = c.getString(c.getColumnIndex(CacheDb.Columns.RESULT));
+                result = c.getString(c.getColumnIndex(CacheOpenHelper.Columns.RESULT));
                 break;
             }
             c.close();

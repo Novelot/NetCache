@@ -4,7 +4,6 @@ package com.novelot.netcache.test;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -16,7 +15,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.novelot.netcache.CacheDb;
+import com.novelot.netcache.CacheOpenHelper;
 import com.novelot.netcache.CacheProvider;
 import com.novelot.netcache.R;
 
@@ -82,7 +81,7 @@ public class TestFragment extends Fragment implements LoaderManager.LoaderCallba
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            ((TextView) view).setText(cursor.getString(cursor.getColumnIndex(CacheDb.Columns.URL)));
+            ((TextView) view).setText(cursor.getString(cursor.getColumnIndex(CacheOpenHelper.Columns.URL)));
         }
 
         @Override

@@ -5,18 +5,19 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 public class CacheProvider extends ContentProvider {
     public static final String AUTHORITIES = "com.kaolafm.cache.CacheProvider";
-    public static final Uri URI = Uri.parse("content://" + AUTHORITIES + "/" + CacheDb.TABLE_NAME);
+    public static final Uri URI = Uri.parse("content://" + AUTHORITIES + "/" + CacheOpenHelper.TABLE_NAME);
     private static final UriMatcher sMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private static final int MATCH_CODE_CACHE = 1;
-    private CacheDb mDb;
+    private CacheOpenHelper mOpenHelper;
 
     static {
-        sMatcher.addURI(AUTHORITIES, CacheDb.TABLE_NAME, MATCH_CODE_CACHE);
+        sMatcher.addURI(AUTHORITIES, CacheOpenHelper.TABLE_NAME, MATCH_CODE_CACHE);
     }
 
     public CacheProvider() {
@@ -24,13 +25,12 @@ public class CacheProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        SQLiteDatabase db = mDb.getWritableDatabase();
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count = 0;
         switch (sMatcher.match(uri)) {
             case MATCH_CODE_CACHE:
-                count = db.delete(CacheDb.TABLE_NAME, selection, selectionArgs);
+                count = db.delete(CacheOpenHelper.TABLE_NAME, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
-                return count;
         }
 
         return count;
@@ -38,10 +38,10 @@ public class CacheProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        // TODO Auto-generated method stub
         switch (sMatcher.match(uri)) {
             case MATCH_CODE_CACHE:
-                return "vnd.android.cursor.dir/vnd." + AUTHORITIES + "." + CacheDb.TABLE_NAME; // one row
+//                return "vnd.android.cursor.dir/vnd." + AUTHORITIES + "." + CacheDb.TABLE_NAME; // one row
+                return "vnd.android.cursor.dir/vnd." + CacheOpenHelper.TABLE_NAME; // one row
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -49,11 +49,17 @@ public class CacheProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        SQLiteDatabase db = mDb.getWritableDatabase();
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         switch (sMatcher.match(uri)) {
             case MATCH_CODE_CACHE:
-                long insert = db.insertOrThrow(CacheDb.TABLE_NAME, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                try {
+                    long insert = db.insertOrThrow(CacheOpenHelper.TABLE_NAME, null, values);
+//                    db.execSQL("INSERT OR REPLACE INTO "+CacheDb.TABLE_NAME);
+//                    getContext().getContentResolver().notifyChange( ContentUris.withAppendedId(URI,insert), null);
+                    getContext().getContentResolver().notifyChange(uri, null);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
 
         return uri;
@@ -61,33 +67,40 @@ public class CacheProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mDb = new CacheDb(getContext());
+        mOpenHelper = new CacheOpenHelper(getContext());
         return false;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        Cursor out = null;
-        SQLiteDatabase db = mDb.getWritableDatabase();
+        Cursor cursor = null;
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         switch (sMatcher.match(uri)) {
             case MATCH_CODE_CACHE:
-                out = db.rawQuery("SELECT * FROM " + CacheDb.TABLE_NAME, null);
+                cursor = db.rawQuery("SELECT * FROM " + CacheOpenHelper.TABLE_NAME, null);
                 Context context = getContext();
                 if (null != context) {
-                    out.setNotificationUri(context.getContentResolver(), uri);
+                    cursor.setNotificationUri(context.getContentResolver(), uri);
                 }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
-        return out;
+        return cursor;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int count = 0;
+        switch (sMatcher.match(uri)) {
+            case MATCH_CODE_CACHE:
+                count = db.update(CacheOpenHelper.TABLE_NAME, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return count;
     }
 }
