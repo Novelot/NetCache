@@ -5,4 +5,9 @@ package com.novelot.netcache;
  */
 public class CacheRequest {
 
+    public String uri;
+    public String result;
+    public String etag;
+    public long lastModified;
+    public long updateTime;
 }

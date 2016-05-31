@@ -1,18 +1,14 @@
 package com.novelot.netcache.test;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
 import com.novelot.netcache.CacheManager;
 import com.novelot.netcache.CacheOpenHelper;
 import com.novelot.netcache.CacheProvider;
-import com.novelot.netcache.CacheRequest;
 import com.novelot.netcache.Callback;
 import com.novelot.netcache.R;
 
@@ -37,7 +33,7 @@ public class MainActivity extends FragmentActivity {
 
     public void addItem(View view) {
         ContentValues values = new ContentValues();
-        values.put(CacheOpenHelper.Columns.URL, "Url-" + (mIndex++));
+        values.put(CacheOpenHelper.Columns.URI, "Url-" + (mIndex++));
         getContentResolver().insert(CacheProvider.URI, values);
     }
 

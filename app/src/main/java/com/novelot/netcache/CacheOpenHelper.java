@@ -14,7 +14,7 @@ public class CacheOpenHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME = "t_cache";
 
     public interface Columns extends BaseColumns {
-        String URL = "url";
+        String URI = "uri";
         String RESULT = "result";
         String ETAG = "etag";
         String LAST_MODIFIED = "last_modified";
@@ -31,7 +31,7 @@ public class CacheOpenHelper extends SQLiteOpenHelper {
         sBuffer.append("CREATE TABLE " + TABLE_NAME + " (");
         sBuffer.append(Columns._ID).append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ");
         sBuffer.append(Columns._COUNT).append(" INTEGER,");
-        sBuffer.append(Columns.URL).append(" TEXT UNIQUE,");
+        sBuffer.append(Columns.URI).append(" TEXT UNIQUE,");
         sBuffer.append(Columns.RESULT).append(" TEXT,");
         sBuffer.append(Columns.ETAG).append(" TEXT,");
         sBuffer.append(Columns.LAST_MODIFIED).append(" LONG,");

@@ -19,6 +19,8 @@ import com.novelot.netcache.CacheOpenHelper;
 import com.novelot.netcache.CacheProvider;
 import com.novelot.netcache.R;
 
+import java.util.Date;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -81,8 +83,13 @@ public class TestFragment extends Fragment implements LoaderManager.LoaderCallba
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            String urlAndResult = cursor.getString(cursor.getColumnIndex(CacheOpenHelper.Columns.URL)) + " : " +
-                    cursor.getString(cursor.getColumnIndex(CacheOpenHelper.Columns.RESULT));
+            long lastModified = cursor.getLong(cursor.getColumnIndex(CacheOpenHelper.Columns.LAST_MODIFIED));
+            Date date = new Date(lastModified);
+//            Calendar.getInstance().setTimeInMillis(lastModified);
+            String urlAndResult = cursor.getString(cursor.getColumnIndex(CacheOpenHelper.Columns.URI))
+                    + " : " +
+                    cursor.getString(cursor.getColumnIndex(CacheOpenHelper.Columns.RESULT))
+                    + ":" + date.toGMTString();
             ((TextView) view).setText(urlAndResult);
         }
 
