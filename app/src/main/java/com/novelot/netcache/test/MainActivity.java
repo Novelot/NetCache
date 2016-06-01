@@ -47,12 +47,13 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onFaiure(Exception e) {
-                e.toString();
+                if (e != null)
+                    e.toString();
             }
         };
 
         boolean isCache = true;
-        CacheManager.getInstance().init(getApplication()).quest(uri, callback, isCache);
+        CacheManager.getInstance().init(getApplication()).quest(uri, callback, isCache, 10 * 1000);
     }
 
 

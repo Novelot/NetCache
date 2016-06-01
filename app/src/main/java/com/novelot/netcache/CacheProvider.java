@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 
 public class CacheProvider extends ContentProvider {
@@ -31,6 +32,9 @@ public class CacheProvider extends ContentProvider {
             case MATCH_CODE_CACHE:
                 count = db.delete(CacheOpenHelper.TABLE_NAME, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
+                break;
+            default:
+                break;
         }
 
         return count;
@@ -53,13 +57,26 @@ public class CacheProvider extends ContentProvider {
         switch (sMatcher.match(uri)) {
             case MATCH_CODE_CACHE:
                 try {
-                    long insert = db.insertOrThrow(CacheOpenHelper.TABLE_NAME, null, values);
-//                    db.execSQL("INSERT OR REPLACE INTO "+CacheDb.TABLE_NAME);
-//                    getContext().getContentResolver().notifyChange( ContentUris.withAppendedId(URI,insert), null);
+                    String sql = SqlUtils.createSqlInsert("INSERT OR REPLACE INTO ", CacheOpenHelper.TABLE_NAME, new String[]{
+                            CacheOpenHelper.Columns.URI, CacheOpenHelper.Columns.RESULT, CacheOpenHelper.Columns.ETAG,
+                            CacheOpenHelper.Columns.LAST_MODIFIED, CacheOpenHelper.Columns.UPDATE_TIME
+                    });
+                    SQLiteStatement insertOrReplaceStatement = db.compileStatement(sql);
+                    insertOrReplaceStatement.bindAllArgsAsStrings(new String[]{
+                            values.getAsString(CacheOpenHelper.Columns.URI),
+                            values.getAsString(CacheOpenHelper.Columns.RESULT),
+                            values.getAsString(CacheOpenHelper.Columns.ETAG),
+                            values.getAsString(CacheOpenHelper.Columns.LAST_MODIFIED),
+                            values.getAsString(CacheOpenHelper.Columns.UPDATE_TIME),
+                    });
+                    insertOrReplaceStatement.execute();
                     getContext().getContentResolver().notifyChange(uri, null);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
+            default:
+                break;
         }
 
         return uri;
@@ -99,6 +116,9 @@ public class CacheProvider extends ContentProvider {
             case MATCH_CODE_CACHE:
                 count = db.update(CacheOpenHelper.TABLE_NAME, values, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
+                break;
+            default:
+                break;
         }
 
         return count;

@@ -10,4 +10,11 @@ public class CacheRequest {
     public String etag;
     public long lastModified;
     public long updateTime;
+
+    @Override
+    public String toString() {
+        return uri + "," + result + "," + etag;
+    }
+
+
 }
