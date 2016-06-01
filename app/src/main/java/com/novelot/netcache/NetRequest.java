@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 网络请求类
  * Created by 刘云龙 on 2016/6/1.
  */
 class NetRequest {
@@ -22,6 +23,9 @@ class NetRequest {
         this.mCallback = callback;
     }
 
+    /**
+     * 真正的网络请求
+     */
     public void exe() {
         if (TextUtils.isEmpty(uri)) {
             if (mCallback != null) {
@@ -37,7 +41,16 @@ class NetRequest {
             Log.v("novelot", "uri=" + uri);
             Log.v("novelot", "result code=" + code);
             if (code == 200) {
+                Log.v("novelot", "======= host:" + uri + " HTTP 响应头 =======");
                 Map<String, List<String>> headerFields = conn.getHeaderFields();
+                for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
+                    if (entry.getKey() == null) {
+                        Log.v("novelot", String.format("======= [%s]", entry.getValue().get(0)));
+                    } else {
+                        Log.v("novelot", String.format("======= %s:[%s]", entry.getKey(), entry.getValue().get(0)));
+                    }
+                }
+                Log.v("novelot", "======= ======= =======");
                 is = conn.getInputStream();
                 //
                 CacheRequest request = new CacheRequest();

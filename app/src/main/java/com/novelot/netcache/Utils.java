@@ -1,10 +1,11 @@
 package com.novelot.netcache;
 
-import android.util.Log;
+import android.text.TextUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 /**
@@ -12,10 +13,24 @@ import java.util.Date;
  */
 class Utils {
 
+    /**
+     * 将字符串转换为GMT毫秒值
+     *
+     * @param s
+     * @return
+     */
     public static long turnGMTTime(String s) {
         return Date.parse(s);
     }
 
+    /**
+     * 将InputStream转换为byte数组
+     *
+     * @param inputStream
+     * @param size
+     * @return
+     * @throws IOException
+     */
     public static byte[] getByteArrayFromInputStream(InputStream inputStream, int size) throws IOException {
         if (inputStream == null) return null;
         ByteArrayOutputStream bytes = new ByteArrayOutputStream(size);
@@ -31,8 +46,15 @@ class Utils {
         }
     }
 
+    /**
+     * 将InputStream转换为String
+     *
+     * @param inputStream
+     * @param contentLength
+     * @param charSet
+     * @return
+     */
     public static String getStringFromInputStream(InputStream inputStream, int contentLength, String charSet) {
-        Log.v("novelot", "charSet=" + charSet);
         if (inputStream == null) return null;
         byte[] bytes = null;
         try {
@@ -42,7 +64,14 @@ class Utils {
         }
 
         if (bytes == null) return null;
-        return new String(bytes);
+        String result = null;
+        try {
+            result = new String(bytes, TextUtils.isEmpty(charSet) ? "utf-8" : charSet);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     /**
