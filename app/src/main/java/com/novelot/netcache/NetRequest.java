@@ -17,6 +17,7 @@ import java.util.Map;
 class NetRequest {
     private String uri;
     private Callback mCallback;
+    private String mRequestMethod = "GET";
 
     public NetRequest(String uri, Callback<CacheRequest> callback) {
         this.uri = uri;
@@ -35,22 +36,28 @@ class NetRequest {
         }
         InputStream is = null;
         try {
+            Log.v(Config.TAG, "uri=" + uri);
             URL url = new URL(uri);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            //
+            conn.setConnectTimeout(Config.CONNECT_TIMEOUT);
+            conn.setRequestMethod(mRequestMethod);
+            conn.setUseCaches(true);
+            conn.setDefaultUseCaches(false);
+            //
             int code = conn.getResponseCode();
-            Log.v("novelot", "uri=" + uri);
-            Log.v("novelot", "result code=" + code);
+            Log.v(Config.TAG, "result code=" + code);
             if (code == 200) {
-                Log.v("novelot", "======= host:" + uri + " HTTP 响应头 =======");
+                Log.v(Config.TAG, "======= host:" + uri + " HTTP 响应头 =======");
                 Map<String, List<String>> headerFields = conn.getHeaderFields();
                 for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
                     if (entry.getKey() == null) {
-                        Log.v("novelot", String.format("======= [%s]", entry.getValue().get(0)));
+                        Log.v(Config.TAG, String.format("======= [%s]", entry.getValue().get(0)));
                     } else {
-                        Log.v("novelot", String.format("======= %s:[%s]", entry.getKey(), entry.getValue().get(0)));
+                        Log.v(Config.TAG, String.format("======= %s:[%s]", entry.getKey(), entry.getValue().get(0)));
                     }
                 }
-                Log.v("novelot", "======= ======= =======");
+                Log.v(Config.TAG, "======= ======= =======");
                 is = conn.getInputStream();
                 //
                 CacheRequest request = new CacheRequest();
@@ -59,7 +66,7 @@ class NetRequest {
                 request.lastModified = Utils.turnGMTTime(headerFields.get("Last-Modified").get(0));
                 request.updateTime = System.currentTimeMillis();
                 request.result = Utils.getStringFromInputStream(is, conn.getContentLength(), conn.getContentEncoding());
-                Log.v("novelot", "run result=" + request.toString());
+                Log.d(Config.TAG, "run result=" + request.toString());
                 //
                 if (mCallback != null) {
                     mCallback.onSuccess(request);
